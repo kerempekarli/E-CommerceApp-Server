@@ -1,9 +1,15 @@
 const getAllProducts = () => {};
+const getProduct = () => {};
 
-const getProductById = (id) => {};
-
-const createProduct = ({ name, description, price, images }) => {};
-
+const addProduct = () => {};
 const updateProduct = (id, { name, description, price, images }) => {};
 
 const deleteProduct = (id) => {};
+
+module.exports = {
+  getAllProducts,
+  addProduct,
+  updateProduct,
+  getProduct,
+  deleteProduct,
+};

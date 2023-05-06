@@ -1,22 +1,16 @@
-// const express = require("express");
-// const validate = require("../middlewares/validate");
-// const schemas = require("../validations/user");
-// const { authenticateToken } = require("../middlewares/authenticate");
-// const {
-//   createUser,
-//   getAllUsers,
-//   getUser,
-//   deleteUser,
-//   updateUser,
-//   loginUser,
-// } = require("../controllers/user");
+const express = require("express");
+const {
+  getAllProducts,
+  addProduct,
+  updateProduct,
+  getProduct,
+  deleteProduct,
+} = require("../controllers/product");
+const router = express.Router();
+router.route("/").get(getAllProducts);
+router.route("/").post(addProduct);
+router.put("/", updateProduct);
+router.get("/:id", getProduct);
+router.delete("/:id", deleteProduct);
 
-// const router = express.Router();
-// router.route("/").get(authenticateToken, getAllUsers);
-// router.route("/").post(createUser);
-// router.put("/", updateUser);
-// router.post("/login", loginUser);
-// router.get("/:id", getUser);
-// router.delete("/:id", deleteUser);
-
-// module.exports = router;
+module.exports = router;
