@@ -8,7 +8,6 @@ const authenticateToken = (req, res, next) => {
       .status(401)
       .send({ error: "Bu işlemi yapmak için giriş yapmalısınız" });
   }
-  console.log(token);
   JWT.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY, (err, user) => {
     if (err) {
       console.log(err);

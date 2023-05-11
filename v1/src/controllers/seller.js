@@ -1,11 +1,13 @@
+const { insert, getAll, remove, update, login } = require("../services/seller");
 const {
-  insert,
-  getAll,
-  getById,
-  remove,
-  update,
-  login,
-} = require("../services/seller");
+  getAllProducts,
+  addProduct,
+  getAllSellerProductsBySellerId,
+  updateProduct,
+  getProduct,
+  removeProduct,
+} = require("../services/product");
+const { addSellerProduct } = require("../services/sellers_products_join");
 const logger = require("../scripts/logger/user");
 const {
   passwordToHash,
@@ -42,7 +44,6 @@ const getAllSellers = (req, res) => {
         .send({ message: "Kayıtları getirme işlemi başarısız", error: err })
     );
 };
-
 const getSeller = (req, res) => {
   console.log(req.params);
   getById(req.params.id)
@@ -101,7 +102,20 @@ const loginSeller = (req, res) => {
     })
     .catch((err) => res.status(400).send(err));
 };
+const sellerProducts = async (req, res) => {
+  const result = await getAllSellerProductsBySellerId(req);
+  if (req.user.id != req.params.sellerId) {
+    return res.status(401).send("Yetkiniz yok.");
+  }
+  return res.status(200).send({ name: "result", result: result });
+};
+const addProductToSeller = async (req, res) => {
+  const product = await addProduct(req);
+  const productId = product.rows[0].id;
+  const sellerProduct = await addSellerProduct(req, productId);
 
+  res.status(200).send(product);
+};
 module.exports = {
   registerSeller,
   getAllSellers,
@@ -109,4 +123,6 @@ module.exports = {
   deleteSeller,
   updateSeller,
   loginSeller,
+  addProductToSeller,
+  sellerProducts,
 };

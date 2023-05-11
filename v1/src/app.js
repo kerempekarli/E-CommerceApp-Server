@@ -2,7 +2,13 @@ const express = require("express");
 const helmet = require("helmet");
 const config = require("./config");
 const events = require("./scripts/events");
-const { userRoutes, accountsRoutes, sellerRoutes } = require("./api-routes");
+const {
+  userRoutes,
+  accountsRoutes,
+  sellerRoutes,
+  productRoutes,
+  categoryRoutes,
+} = require("./api-routes");
 config();
 events();
 const app = express();
@@ -14,4 +20,6 @@ app.listen(3232, () => {
   app.use("/users", userRoutes);
   app.use("/sellers", sellerRoutes);
   app.use("/accounts", accountsRoutes);
+  app.use("/products", productRoutes);
+  app.use("/categories", categoryRoutes);
 });

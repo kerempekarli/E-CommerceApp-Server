@@ -14,13 +14,7 @@ const login = (data) => {
   };
   return db.query(query);
 };
-const getById = (id) => {
-  const query = {
-    text: "SELECT * FROM sellers WHERE id = $1 LIMIT 1",
-    values: ["1"],
-  };
-  return db.query(query);
-};
+
 const getAll = () => {
   return db.query("SELECT * FROM sellers");
 };
@@ -46,7 +40,6 @@ const update = (req, res) => {
 module.exports = {
   insert,
   login,
-  getById,
   getAll,
   remove,
   update,
