@@ -14,7 +14,7 @@ events();
 const app = express();
 app.use(helmet());
 app.use(express.json());
-
+app.use(express.static("uploads/"));
 app.listen(3232, () => {
   console.log("3232 Portu üzerinden çalışıyor.");
   app.use("/users", userRoutes);

@@ -5,6 +5,7 @@ const {
   remove,
   update,
   login,
+  addUserPhotoService,
 } = require("../services/user");
 const logger = require("../scripts/logger/user");
 const {
@@ -12,6 +13,7 @@ const {
   generateAccessToken,
   generateRefreshToken,
 } = require("../scripts/utils/helper");
+const { imageToBase64 } = require("../scripts/utils/fileHelper");
 const createUser = (req, res) => {
   req.body.password = passwordToHash(req.body.password);
   console.log(req.body.password);
@@ -43,15 +45,12 @@ const getAllUsers = (req, res) => {
     );
 };
 
-const getUser = (req, res) => {
-  console.log(req.params);
-  getById(req.params.id)
-    .then((response) => res.status(200).send({ User: response.rows[0] }))
-    .catch((err) =>
-      res
-        .status(500)
-        .send({ message: "Kullanıcıyı getirme işlemi başarısız", error: err })
-    );
+const getUser = async (req, res) => {
+  const data = await getById(req.params.id);
+  const imagePath = "uploads/" + data.rows[0].user_image;
+  const photo64 = await imageToBase64(imagePath);
+
+  res.status(200).send({ user: { ...data.rows[0], user_image: photo64 } });
 };
 const deleteUser = (req, res) => {
   remove(req)
@@ -100,8 +99,13 @@ const loginUser = (req, res) => {
     })
     .catch((err) => res.status(400).send(err));
 };
+const addUserPhoto = async (req, res) => {
+  const result = await addUserPhotoService(req.file.filename, req.params.id);
+  res.status(200).send("Fotoğraf başarıyla eklendi.");
+};
 
 module.exports = {
+  addUserPhoto,
   createUser,
   getAllUsers,
   getUser,

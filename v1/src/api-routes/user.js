@@ -9,7 +9,11 @@ const {
   deleteUser,
   updateUser,
   loginUser,
+  addUserPhoto,
 } = require("../controllers/user");
+const { storage } = require("../scripts/utils/fileHelper");
+const multer = require("multer");
+const uploadFile = multer({ storage: storage });
 
 const router = express.Router();
 router.route("/").get(authenticateToken, getAllUsers);
@@ -20,5 +24,8 @@ router.put("/", updateUser);
 router.post("/login", loginUser);
 router.get("/:id", getUser);
 router.delete("/:id", deleteUser);
+router
+  .route("/:id/add-user-photo")
+  .patch(uploadFile.single("photo"), addUserPhoto);
 
 module.exports = router;

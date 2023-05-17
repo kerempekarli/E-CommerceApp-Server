@@ -11,7 +11,7 @@ const insert = (data) => {
 const getById = (id) => {
   const query = {
     text: "SELECT * FROM users WHERE id = $1 LIMIT 1",
-    values: ["1"],
+    values: [id],
   };
   return db.query(query);
 };
@@ -27,14 +27,22 @@ const remove = (req, res) => {
   return db.query(query);
 };
 const update = (req, res) => {
-  const query = {
-    text: "UPDATE users SET first_name = $1 WHERE id = $2",
-    values: [req.body.first_name, req.body.id],
-  };
+  let query = "UPDATE users SET ";
+  let values = [];
+  let index = 1;
 
-  return db.query(query);
+  for (let column in req.body) {
+    query += `${column} = $${index}, `;
+    values.push(req.body[column]);
+    index++;
+  }
+
+  query = query.slice(0, -2); // Son iki karakteri (", ") kaldır
+  query += ` WHERE id = $${index}`;
+  values.push(req.body.id);
+
+  return db.query(query, values);
 };
-
 const login = (data) => {
   console.log(data);
   query = {
@@ -42,6 +50,11 @@ const login = (data) => {
     values: [data.email, data.password],
   };
   return db.query(query);
+};
+const addUserPhotoService = (filename, id) => {
+  const query = "UPDATE users SET user_image = $1 WHERE id = $2";
+  const values = [filename, id];
+  return db.query(query, values);
 };
 
 module.exports = {
@@ -51,4 +64,5 @@ module.exports = {
   remove,
   update,
   login,
+  addUserPhotoService,
 };
