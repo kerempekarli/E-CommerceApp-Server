@@ -9,6 +9,7 @@ const {
   likeTheProduct,
   addToWishlist,
   addToCart,
+  decreaseFromCart,
 } = require("../controllers/product");
 const { authenticateToken } = require("../middlewares/authenticate");
 const router = express.Router();
@@ -21,5 +22,8 @@ router.route("/:id/add-comment").post(authenticateToken, commentToProduct);
 router.route("/:id/like").post(authenticateToken, likeTheProduct);
 router.route("/:id/add-to-wishlist").post(authenticateToken, addToWishlist);
 router.route("/:id/add-to-cart").post(authenticateToken, addToCart);
+router
+  .route("/:id/decrease-cart-item-quantity")
+  .post(authenticateToken, decreaseFromCart);
 
 module.exports = router;

@@ -50,6 +50,32 @@ class CartService {
       await db.query(insertCartItemQuery, insertCartItemValues);
     }
   }
+  async decreaseCartItemQuantity(cartId, productId) {
+    const existingCartItemQuery =
+      "SELECT * FROM cart_items WHERE cart_id = $1 AND product_id = $2";
+    const existingCartItemValues = [cartId, productId];
+    const existingCartItemResult = await db.query(
+      existingCartItemQuery,
+      existingCartItemValues
+    );
+
+    if (existingCartItemResult.rows.length > 0) {
+      const existingCartItem = existingCartItemResult.rows[0];
+      const newQuantity = existingCartItem.quantity - 1;
+
+      if (newQuantity > 0) {
+        const updateCartItemQuery =
+          "UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND product_id = $3";
+        const updateCartItemValues = [newQuantity, cartId, productId];
+        await db.query(updateCartItemQuery, updateCartItemValues);
+      } else {
+        const deleteCartItemQuery =
+          "DELETE FROM cart_items WHERE cart_id = $1 AND product_id = $2";
+        const deleteCartItemValues = [cartId, productId];
+        await db.query(deleteCartItemQuery, deleteCartItemValues);
+      }
+    }
+  }
 }
 
 // Singleton örneğini oluştur
