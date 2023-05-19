@@ -76,6 +76,24 @@ class CartService {
       }
     }
   }
+  async getCartItems(cartId) {
+    const query = `
+      SELECT ci.id, ci.product_id, ci.quantity, p.name, p.price
+      FROM cart_items ci
+      INNER JOIN products p ON ci.product_id = p.id
+      WHERE ci.cart_id = $1
+    `;
+    const values = [cartId];
+    const result = await db.query(query, values);
+
+    return result.rows;
+  }
+  // Kullanıcının kartındaki öğeleri cart_items tablosundan sil
+  async deleteCartItems(cartId) {
+    const deleteCartItemsQuery = "DELETE FROM cart_items WHERE cart_id = $1";
+    const deleteCartItemsValues = [cartId];
+    await db.query(deleteCartItemsQuery, deleteCartItemsValues);
+  }
 }
 
 // Singleton örneğini oluştur

@@ -8,6 +8,7 @@ const {
   sellerRoutes,
   productRoutes,
   categoryRoutes,
+  orderRoutes,
 } = require("./api-routes");
 config();
 events();
@@ -22,4 +23,5 @@ app.listen(3232, () => {
   app.use("/accounts", accountsRoutes);
   app.use("/products", productRoutes);
   app.use("/categories", categoryRoutes);
+  app.use("/orders", orderRoutes);
 });
