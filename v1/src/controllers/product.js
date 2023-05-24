@@ -22,12 +22,16 @@ const getAllProducts = async (req, res) => {
   }
 };
 const addProduct = async (req, res) => {
+  console.log("REQ ", req.body);
   try {
+    console.log(req.file.filename);
+
     const data = await add(req, res);
     const product_id = data.rows[0].id;
+    console.log("PRODUCT_ID ASDGSAGSADGDASGSA");
     const seller_products = await addSellerProduct(req, product_id);
     console.log("seller_products başarıyla eklendi ", seller_products);
-    res.status(201).json(data.rows[0]);
+    res.status(201).send("Ekleme işlemi başarılı");
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: "Internal server error" });

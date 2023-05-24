@@ -3,12 +3,14 @@ const db = require("../loaders/db");
 const getAll = async (req, res) => {
   return db.query("SELECT * FROM products");
 };
-const addProduct = async (req, res) => {
+const add = async (req, res) => {
   const { name, description, price } = req.body;
-
+  console.log("sadgdsagsadgsdagasd", name);
+  const imageName = "http://localhost:3232/uploads/" + req.file.filename;
+  console.log(name, +" " + description + " ", price + " ", imageName);
   return await db.query(
-    "INSERT INTO products (name, description, price) VALUES ($1, $2, $3) RETURNING *",
-    [name, description, price]
+    "INSERT INTO products (name, description, price, product_image) VALUES ($1, $2, $3, $4) RETURNING *",
+    [name, description, price, imageName]
   );
 };
 const update = async (req, res) => {
@@ -110,7 +112,7 @@ const likeTheProductService = async (productId, userId, res) => {
     });
   }
 };
-const addToWishlistService = async (productId, userId,res) => {
+const addToWishlistService = async (productId, userId, res) => {
   try {
     const wishlistId = await getOrCreateWishlist(userId); // Kullanıcının mevcut wishlist ID'sini al veya yeni bir tane oluştur
 
@@ -162,7 +164,7 @@ async function getOrCreateWishlist(userId) {
 
 module.exports = {
   getAll,
-  addProduct,
+  add,
   update,
   get,
   remove,

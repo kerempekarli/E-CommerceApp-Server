@@ -12,9 +12,14 @@ const {
   decreaseFromCart,
 } = require("../controllers/product");
 const { authenticateToken } = require("../middlewares/authenticate");
+const { storage } = require("../scripts/utils/fileHelper");
+const multer = require("multer");
+const uploadFile = multer({ storage: storage });
 const router = express.Router();
 router.route("/").get(authenticateToken, getAllProducts);
-router.route("/add").post(authenticateToken, addProduct);
+router
+  .route("/add")
+  .post(authenticateToken, uploadFile.single("photo"), addProduct);
 router.route("/:id").put(authenticateToken, updateProduct);
 router.get("/:id", getProduct);
 router.delete("/:id", removeProduct);

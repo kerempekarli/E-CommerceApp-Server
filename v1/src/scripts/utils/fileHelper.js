@@ -1,6 +1,6 @@
 const multer = require("multer");
 const fs = require("fs");
-
+const path = require("path");
 // Resmi okuyup Base64 formatına dönüştürme fonksiyonu
 const imageToBase64 = (imagePath) => {
   // Resmi okuma
@@ -12,12 +12,13 @@ const imageToBase64 = (imagePath) => {
   return base64Image;
 };
 const storage = multer.diskStorage({
-  destination: "uploads", // Dosyaların kaydedileceği klasörü belirtin
+  destination: "uploads/", // Dosyaların kaydedileceği klasörü belirtin
   filename: function (req, file, cb) {
     // Unique bir dosya adı oluşturun
     const uniqueSuffix =
       Date.now() + "-" + Math.round(Math.random() * 1e9) + ".jpg";
     cb(null, file.fieldname + "-" + uniqueSuffix);
+    console.log(req.body);
   },
 });
 
