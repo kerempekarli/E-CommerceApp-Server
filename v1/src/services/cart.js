@@ -51,32 +51,38 @@ class CartService {
     }
   }
   async decreaseCartItemQuantity(cartId, productId) {
-    const existingCartItemQuery =
-      "SELECT * FROM cart_items WHERE cart_id = $1 AND product_id = $2";
-    const existingCartItemValues = [cartId, productId];
-    const existingCartItemResult = await db.query(
-      existingCartItemQuery,
-      existingCartItemValues
-    );
+    try {
+      const existingCartItemQuery =
+        "SELECT * FROM cart_items WHERE cart_id = $1 AND product_id = $2";
+      const existingCartItemValues = [cartId, productId];
+      const existingCartItemResult = await db.query(
+        existingCartItemQuery,
+        existingCartItemValues
+      );
 
-    if (existingCartItemResult.rows.length > 0) {
-      const existingCartItem = existingCartItemResult.rows[0];
-      const newQuantity = existingCartItem.quantity - 1;
+      if (existingCartItemResult.rows.length > 0) {
+        const existingCartItem = existingCartItemResult.rows[0];
+        const newQuantity = existingCartItem.quantity - 1;
 
-      if (newQuantity > 0) {
-        const updateCartItemQuery =
-          "UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND product_id = $3";
-        const updateCartItemValues = [newQuantity, cartId, productId];
-        await db.query(updateCartItemQuery, updateCartItemValues);
-      } else {
-        const deleteCartItemQuery =
-          "DELETE FROM cart_items WHERE cart_id = $1 AND product_id = $2";
-        const deleteCartItemValues = [cartId, productId];
-        await db.query(deleteCartItemQuery, deleteCartItemValues);
+        if (newQuantity > 0) {
+          const updateCartItemQuery =
+            "UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND product_id = $3";
+          const updateCartItemValues = [newQuantity, cartId, productId];
+          await db.query(updateCartItemQuery, updateCartItemValues);
+        } else {
+          const deleteCartItemQuery =
+            "DELETE FROM cart_items WHERE cart_id = $1 AND product_id = $2";
+          const deleteCartItemValues = [cartId, productId];
+          await db.query(deleteCartItemQuery, deleteCartItemValues);
+        }
       }
+    } catch (err) {
+      console.log(err);
     }
   }
-  async getCartItems(cartId) {
+  async getCartItems(userId) {
+    const cartId = await this.getOrCreateCart(userId);
+
     const query = `
       SELECT ci.id, ci.product_id, ci.quantity, p.name, p.price
       FROM cart_items ci

@@ -65,18 +65,26 @@ const addToWishlist = async (req, res) => {
 };
 
 const addToCart = async (req, res) => {
-  const cardId = await cartService.getOrCreateCart(req.user.id);
-  const result = await cartService.addToCart(cardId, req.params.id, 1);
-  res.status(200).send(result);
+  try {
+    const cardId = await cartService.getOrCreateCart(req.user.id);
+    const result = await cartService.addToCart(cardId, req.params.id, 1);
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(400).send(err);
+  }
 };
 const decreaseFromCart = async (req, res) => {
-  const cardId = await cartService.getOrCreateCart(req.user.id);
-  const result = await cartService.decreaseCartItemQuantity(
-    cardId,
-    req.params.id,
-    1
-  );
-  res.status(200).send(result);
+  try {
+    const cardId = await cartService.getOrCreateCart(req.user.id);
+    const result = await cartService.decreaseCartItemQuantity(
+      cardId,
+      req.params.id,
+      1
+    );
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(400).send(err);
+  }
 };
 module.exports = {
   getAllProducts,
