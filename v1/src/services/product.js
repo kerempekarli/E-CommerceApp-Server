@@ -4,13 +4,12 @@ const getAll = async (req, res) => {
   return db.query("SELECT * FROM products");
 };
 const add = async (req, res) => {
-  const { name, description, price } = req.body;
-  console.log("sadgdsagsadgsdagasd", name);
+  let { name, description, price, category_id } = req.body;
+  // const category_id_int = await parseInt(category_id, 10);
   const imageName = "http://localhost:3232/uploads/" + req.file.filename;
-  console.log(name, +" " + description + " ", price + " ", imageName);
   return await db.query(
-    "INSERT INTO products (name, description, price, product_image) VALUES ($1, $2, $3, $4) RETURNING *",
-    [name, description, price, imageName]
+    "INSERT INTO products (name, description, price, product_image,category_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+    [name, description, price, imageName, category_id]
   );
 };
 const update = async (req, res) => {
