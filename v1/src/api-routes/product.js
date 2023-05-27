@@ -16,7 +16,7 @@ const { storage } = require("../scripts/utils/fileHelper");
 const multer = require("multer");
 const uploadFile = multer({ storage: storage });
 const router = express.Router();
-router.route("/").get(authenticateToken, getAllProducts);
+router.route("/").get(getAllProducts);
 router
   .route("/add")
   .post(authenticateToken, uploadFile.single("photo"), addProduct);

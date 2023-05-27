@@ -44,9 +44,8 @@ const update = (req, res) => {
   return db.query(query, values);
 };
 const login = (data) => {
-  console.log(data);
   query = {
-    text: "SELECT * FROM users WHERE email = $1 AND password = $2",
+    text: "SELECT users.*, roles.rol_adı FROM users JOIN roles ON users.rol_id = roles.rol_id WHERE users.email = $1 AND users.password = $2",
     values: [data.email, data.password],
   };
   return db.query(query);
@@ -54,7 +53,7 @@ const login = (data) => {
 const addUserPhotoService = (filename, id) => {
   const query = "UPDATE users SET user_image = $1 WHERE id = $2";
   const values = [filename, id];
-  return db.query(query, values);
+  return db.query(query, values); 
 };
 
 module.exports = {
