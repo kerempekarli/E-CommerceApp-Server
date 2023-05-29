@@ -12,7 +12,7 @@ const {
   addProductToSeller,
 } = require("../controllers/seller");
 router.route("/").get(getAllSellers);
-router.route("/register").post(registerSeller);
+router.route("/").post(registerSeller);
 router.put("/:id", updateSeller);
 router.post("/login", loginSeller);
 router.get("/:id", getSeller);

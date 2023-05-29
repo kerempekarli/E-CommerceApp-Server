@@ -17,9 +17,7 @@ const uploadFile = multer({ storage: storage });
 
 const router = express.Router();
 router.route("/").get(authenticateToken, getAllUsers);
-router
-  .route("/")
-  .post(authenticateToken, validate(schemas.createValidation), createUser);
+router.route("/").post(validate(schemas.createValidation), createUser);
 router.put("/", updateUser);
 router.post("/login", loginUser);
 router.get("/:id", getUser);

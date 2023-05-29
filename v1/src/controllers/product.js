@@ -14,7 +14,6 @@ const cartService = require("../services/cart");
 const getAllProducts = async (req, res) => {
   try {
     const data = await getAll(req, res);
-    console.log(data);
     res.status(200).send(data.rows);
   } catch (err) {
     console.error(err.message);
