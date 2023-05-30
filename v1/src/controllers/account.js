@@ -39,7 +39,6 @@ const resetPassword = (req, res) => {
       process.env.ACCESS_TOKEN_SECRET_KEY
     );
     const userId = decoded.id;
-    console.log("DECODED ", decoded);
 
     // Yeni şifreyi hashleyin ve veritabanında güncelleyin
     const hashedPassword = passwordToHash(password);

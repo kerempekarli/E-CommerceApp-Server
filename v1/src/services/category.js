@@ -1,6 +1,5 @@
 const db = require("../loaders/db");
 const create = async (req, res) => {
-  console.log("NAME", req.body.name);
   try {
     const query = "INSERT INTO categories (name) VALUES ($1) RETURNING *";
     const values = [req.body.name];

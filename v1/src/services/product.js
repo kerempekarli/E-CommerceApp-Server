@@ -160,6 +160,17 @@ async function getOrCreateWishlist(userId) {
     return createResult.rows[0].id;
   }
 }
+const getProductLikesService = async (userId) => {
+  try {
+    const query = "SELECT product_id FROM product_likes WHERE user_id = $1";
+    const values = [userId];
+    const result = await db.query(query, values);
+    return result.rows.map((row) => row.product_id);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 module.exports = {
   getAll,
@@ -171,4 +182,5 @@ module.exports = {
   addComment,
   likeTheProductService,
   addToWishlistService,
+  getProductLikesService,
 };

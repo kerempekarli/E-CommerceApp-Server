@@ -7,6 +7,7 @@ const {
   addComment,
   likeTheProductService,
   addToWishlistService,
+  getProductLikesService,
 } = require("../services/product");
 const { addSellerProduct } = require("../services/sellers_products_join");
 const cartService = require("../services/cart");
@@ -21,15 +22,10 @@ const getAllProducts = async (req, res) => {
   }
 };
 const addProduct = async (req, res) => {
-  console.log("REQ ", req.body);
   try {
-    console.log(req.file.filename);
-
     const data = await add(req, res);
     const product_id = data.rows[0].id;
-    console.log("PRODUCT_ID ASDGSAGSADGDASGSA");
     const seller_products = await addSellerProduct(req, product_id);
-    console.log("seller_products başarıyla eklendi ", seller_products);
     res.status(201).send("Ekleme işlemi başarılı");
   } catch (err) {
     console.error(err.message);
@@ -85,6 +81,19 @@ const decreaseFromCart = async (req, res) => {
     res.status(400).send(err);
   }
 };
+
+const getProductLikes = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log(userId);
+    const data = await getProductLikesService(userId);
+    res.status(200).send(data);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send("Hata");
+    throw error;
+  }
+};
 module.exports = {
   getAllProducts,
   addProduct,
@@ -96,4 +105,5 @@ module.exports = {
   addToWishlist,
   addToCart,
   decreaseFromCart,
+  getProductLikes,
 };

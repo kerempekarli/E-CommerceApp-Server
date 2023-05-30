@@ -16,7 +16,6 @@ const {
 } = require("../scripts/utils/helper");
 const registerSeller = (req, res) => {
   req.body.password = passwordToHash(req.body.password);
-  console.log(req.body.password);
   insert(req.body)
     .then((response) => {
       res.status(200).send({ message: "Kayıt başarılı", data: response });
@@ -45,7 +44,6 @@ const getAllSellers = (req, res) => {
     );
 };
 const getSeller = (req, res) => {
-  console.log(req.params);
   getById(req.params.id)
     .then((response) => res.status(200).send({ Seller: response.rows[0] }))
     .catch((err) =>
@@ -66,7 +64,6 @@ const deleteSeller = (req, res) => {
     );
 };
 const updateSeller = (req, res) => {
-  console.log("req ", req);
   update(req)
     .then((response) =>
       res
@@ -85,7 +82,6 @@ const loginSeller = (req, res) => {
   login(req.body)
     .then((response) => {
       if (response.rowCount > 0) {
-        console.log(response.rows[0]);
         const Seller = {
           ...response.rows[0],
 

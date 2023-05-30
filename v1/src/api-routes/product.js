@@ -9,6 +9,7 @@ const {
   likeTheProduct,
   addToWishlist,
   addToCart,
+  getProductLikes,
   decreaseFromCart,
 } = require("../controllers/product");
 const { authenticateToken } = require("../middlewares/authenticate");
@@ -20,6 +21,7 @@ router.route("/").get(getAllProducts);
 router
   .route("/add")
   .post(authenticateToken, uploadFile.single("photo"), addProduct);
+router.route("/likes").get(authenticateToken, getProductLikes);
 router.route("/:id").put(authenticateToken, updateProduct);
 router.get("/:id", getProduct);
 router.delete("/:id", removeProduct);

@@ -16,7 +16,6 @@ const {
 const { imageToBase64 } = require("../scripts/utils/fileHelper");
 const createUser = (req, res) => {
   req.body.password = passwordToHash(req.body.password);
-  console.log(req.body.password);
   insert(req.body)
     .then((response) => {
       res.status(200).send({ message: "Kayıt başarılı", data: response });
@@ -82,7 +81,6 @@ const loginUser = (req, res) => {
   login(req.body)
     .then((response) => {
       if (response.rowCount > 0) {
-        console.log(response.rows[0]);
         const user = {
           ...response.rows[0],
 
