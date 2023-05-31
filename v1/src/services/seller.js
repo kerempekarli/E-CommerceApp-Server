@@ -7,7 +7,6 @@ const insert = (data) => {
   );
 };
 const login = (data) => {
-  console.log(data);
   query = {
     text: "SELECT sellers.*, roles.rol_adı FROM sellers JOIN roles ON sellers.rol_id = roles.rol_id WHERE sellers.email = $1 AND sellers.password = $2",
     values: [data.email, data.password],

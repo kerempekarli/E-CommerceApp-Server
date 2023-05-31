@@ -14,7 +14,6 @@ const authenticateToken = (req, res, next) => {
       return res.status(403).send({ error: "Token süresi geçmiş" });
     }
     req.user = user;
-    console.log(user);
     next();
   });
 };

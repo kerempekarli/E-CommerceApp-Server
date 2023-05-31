@@ -12,6 +12,7 @@ const {
   orderRoutes,
   cartRoutes,
   roleRoutes,
+  wishListRoutes,
 } = require("./api-routes");
 config();
 events();
@@ -31,4 +32,5 @@ app.listen(3232, () => {
   app.use("/orders", orderRoutes);
   app.use("/cart", cartRoutes);
   app.use("/roles", roleRoutes);
+  app.use("/wishlist", wishListRoutes);
 });
