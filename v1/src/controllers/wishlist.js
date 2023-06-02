@@ -29,7 +29,7 @@ const addItem = async (req, res) => {
     res.status(400).send(error);
   }
 };
-const deleteCartItem = async (req, res) => {
+const deleteWishlistItem = async (req, res) => {
   try {
     const product_id = req.body.product_id;
     const wishList = await wishListService.getOrCreateWishListService(
@@ -46,12 +46,12 @@ const deleteCartItem = async (req, res) => {
       res.status(400).send("Ürün zaten istek listenizde ekli değil.");
     }
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).send("İstek listesinden silme işlemi başarısız");
   }
 };
 
 module.exports = {
   getWishListItems,
   addItem,
-  deleteCartItem,
+  deleteWishlistItem,
 };

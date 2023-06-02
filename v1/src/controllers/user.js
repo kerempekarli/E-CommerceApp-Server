@@ -43,7 +43,6 @@ const getAllUsers = (req, res) => {
         .send({ message: "Kayıtları getirme işlemi başarısız", error: err })
     );
 };
-
 const getUser = async (req, res) => {
   const data = await getById(req.params.id);
   const imagePath = "uploads/" + data.rows[0].user_image;

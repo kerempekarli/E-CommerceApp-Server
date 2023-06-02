@@ -8,6 +8,9 @@ const {
   likeTheProductService,
   addToWishlistService,
   getProductLikesService,
+  getCommentsOfProductService,
+  updateCommentService,
+  deleteCommentOfProductService,
 } = require("../services/product");
 const { addSellerProduct } = require("../services/sellers_products_join");
 const cartService = require("../services/cart");
@@ -94,6 +97,15 @@ const getProductLikes = async (req, res) => {
     throw error;
   }
 };
+const getCommentsOfProduct = async (req, res) => {
+  await getCommentsOfProductService(req, res);
+};
+const updateComment = async (req, res) => {
+  updateCommentService(req, res);
+};
+const deleteCommentOfProduct = async (req, res) => {
+  deleteCommentOfProductService(req, res);
+};
 module.exports = {
   getAllProducts,
   addProduct,
@@ -106,4 +118,7 @@ module.exports = {
   addToCart,
   decreaseFromCart,
   getProductLikes,
+  getCommentsOfProduct,
+  updateComment,
+  deleteCommentOfProduct,
 };

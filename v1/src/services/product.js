@@ -171,6 +171,82 @@ const getProductLikesService = async (userId) => {
     throw error;
   }
 };
+const getCommentsOfProductService = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const query = "SELECT * FROM product_comments WHERE product_id = $1";
+    const values = [productId];
+    const result = await db.query(query, values);
+
+    // Yorumları istemciye gönderme
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error while getting comments:", error);
+    res.status(500).json({ error: "An error occurred while getting comments" });
+  }
+};
+const updateCommentService = async (req, res) => {
+  const productId = req.params.id;
+  const commentId = req.params.commentId;
+  const updatedComment = req.body.comment; // Güncellenmiş yorumu al
+  const userId = req.user.id; // Kullanıcının kimliğini al
+
+  try {
+    const checkOwnershipQuery =
+      "SELECT user_id FROM product_comments WHERE product_id = $1 AND id = $2";
+    const checkOwnershipValues = [productId, commentId];
+    const result = await db.query(checkOwnershipQuery, checkOwnershipValues);
+
+    // Yorumun sahibiyle kontrol yapma
+    if (result.rows.length > 0 && result.rows[0].user_id === userId) {
+      // Kullanıcı yorumun sahibi, güncelleme işlemini gerçekleştir
+      const updateQuery =
+        "UPDATE product_comments SET comment = $1 WHERE product_id = $2 AND id = $3";
+      const updateValues = [updatedComment, productId, commentId];
+      await db.query(updateQuery, updateValues);
+
+      // Başarılı yanıt
+      res.json({ message: "Comment updated successfully" });
+    } else {
+      // Kullanıcı yorumun sahibi değil, yetkisiz erişim
+      res.status(403).json({ error: "Unauthorized access" });
+    }
+
+    // Veritabanı bağlantısını serbest bırakma
+  } catch (error) {
+    console.error("Error while updating comment:", error);
+    res.status(500).json({ error: "An error occurred while updating comment" });
+  }
+};
+const deleteCommentOfProductService = async (req, res) => {
+  const productId = req.params.id;
+  const commentId = req.params.commentId;
+  const userId = req.user.id; // Kullanıcının kimliğini al
+
+  try {
+    const checkOwnershipQuery =
+      "SELECT user_id FROM product_comments WHERE product_id = $1 AND id = $2";
+    const checkOwnershipValues = [productId, commentId];
+    const result = await db.query(checkOwnershipQuery, checkOwnershipValues);
+
+    // Yorumun sahibiyle kontrol yapma
+    if (result.rows.length > 0 && result.rows[0].user_id === userId) {
+      const query =
+        "DELETE FROM product_comments WHERE product_id = $1 AND id = $2";
+      const values = [productId, commentId];
+      await db.query(query, values);
+
+      // Başarılı yanıt
+      res.json({ message: "Comment deleted successfully" });
+    } else {
+      // Kullanıcı yorumun sahibi değil, yetkisiz erişim
+      res.status(403).json({ error: "Unauthorized access" });
+    }
+  } catch (error) {
+    console.error("Error while deleting comment:", error);
+    res.status(500).json({ error: "An error occurred while deleting comment" });
+  }
+};
 
 module.exports = {
   getAll,
@@ -183,4 +259,7 @@ module.exports = {
   likeTheProductService,
   addToWishlistService,
   getProductLikesService,
+  getCommentsOfProductService,
+  updateCommentService,
+  deleteCommentOfProductService,
 };
