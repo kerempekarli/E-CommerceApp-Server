@@ -29,7 +29,7 @@ router.route("/:id").put(authenticateToken, updateProduct);
 router.get("/:id", getProduct);
 router.delete("/:id", removeProduct);
 router.route("/:id/add-comment").post(authenticateToken, commentToProduct);
-router.route("/:id/get-comments").get(authenticateToken, getCommentsOfProduct);
+router.route("/:id/get-comments").get(getCommentsOfProduct);
 router.route("/:id/comments/:commentId").put(authenticateToken, updateComment);
 router
   .route("/:id/comments/:commentId")

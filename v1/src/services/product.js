@@ -174,17 +174,23 @@ const getProductLikesService = async (userId) => {
 const getCommentsOfProductService = async (req, res) => {
   try {
     const productId = req.params.id;
-    const query = "SELECT * FROM product_comments WHERE product_id = $1";
+    const query = `
+      SELECT pc.*,  u.username, u.email, u.first_name, u.last_name
+      FROM product_comments pc
+      INNER JOIN users u ON pc.user_id = u.id
+      WHERE pc.product_id = $1
+    `;
     const values = [productId];
     const result = await db.query(query, values);
 
-    // Yorumları istemciye gönderme
+    // Send comments with user information to the client
     res.json(result.rows);
   } catch (error) {
     console.error("Error while getting comments:", error);
     res.status(500).json({ error: "An error occurred while getting comments" });
   }
 };
+
 const updateCommentService = async (req, res) => {
   const productId = req.params.id;
   const commentId = req.params.commentId;
