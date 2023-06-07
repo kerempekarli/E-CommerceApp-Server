@@ -11,6 +11,7 @@ const {
   getCommentsOfProductService,
   updateCommentService,
   deleteCommentOfProductService,
+  getSellersOfProductService,
 } = require("../services/product");
 const { addSellerProduct } = require("../services/sellers_products_join");
 const cartService = require("../services/cart");
@@ -40,8 +41,13 @@ const updateProduct = async (req, res) => {
   res.status(200).send(result);
 };
 const getProduct = async (req, res) => {
-  const result = await get(req, res);
-  return res.status(200).send(result);
+  const sellers = await getSellersOfProductService(req.params.id);
+  const products = [];
+  for (const seller of sellers) {
+    const product = await get(req, res, seller.id);
+    products.push(product);
+  }
+  return res.status(200).send({ products: products, success: true });
 };
 const removeProduct = async (req, res) => {
   return await remove(req, res);
@@ -65,7 +71,12 @@ const addToWishlist = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     const cardId = await cartService.getOrCreateCart(req.user.id);
-    const result = await cartService.addToCart(cardId, req.params.id, 1);
+    const result = await cartService.addToCart(
+      cardId,
+      req.params.id,
+      1,
+      req.body.seller_id
+    );
     res.status(200).send(result);
   } catch (err) {
     res.status(400).send(err);
@@ -106,6 +117,21 @@ const updateComment = async (req, res) => {
 const deleteCommentOfProduct = async (req, res) => {
   deleteCommentOfProductService(req, res);
 };
+
+const getSellersOfProduct = async (req, res) => {
+  try {
+    console.log("ÇALIŞTI");
+    const product_id = req.params.id;
+
+    const data = await getSellersOfProductService(product_id);
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error getting sellers of product:", error);
+    res.status(500).json({ error: "Failed to get sellers of product" });
+  }
+};
+
 module.exports = {
   getAllProducts,
   addProduct,
@@ -121,4 +147,5 @@ module.exports = {
   getCommentsOfProduct,
   updateComment,
   deleteCommentOfProduct,
+  getSellersOfProduct,
 };

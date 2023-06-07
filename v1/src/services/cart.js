@@ -26,7 +26,8 @@ class CartService {
     return this.cart.id;
   }
 
-  async addToCart(cartId, productId, quantity) {
+  async addToCart(cartId, productId, quantity, seller_id) {
+    console.log("EKLEME CART ÇALIŞTI");
     const existingCartItemQuery =
       "SELECT * FROM cart_items WHERE cart_id = $1 AND product_id = $2";
     const existingCartItemValues = [cartId, productId];
@@ -45,8 +46,8 @@ class CartService {
       await db.query(updateCartItemQuery, updateCartItemValues);
     } else {
       const insertCartItemQuery =
-        "INSERT INTO cart_items (cart_id, product_id, quantity) VALUES ($1, $2, $3)";
-      const insertCartItemValues = [cartId, productId, quantity];
+        "INSERT INTO cart_items (cart_id, product_id, quantity, seller_id) VALUES ($1, $2, $3, $4)";
+      const insertCartItemValues = [cartId, productId, quantity, seller_id];
       await db.query(insertCartItemQuery, insertCartItemValues);
     }
   }
@@ -84,10 +85,12 @@ class CartService {
     const cartId = await this.getOrCreateCart(userId);
 
     const query = `
-      SELECT ci.id, ci.product_id, ci.quantity, p.name, p.price
-      FROM cart_items ci
-      INNER JOIN products p ON ci.product_id = p.id
-      WHERE ci.cart_id = $1
+    SELECT ci.id, ci.product_id, ci.quantity, p.name, spj.price
+    FROM cart_items ci
+    INNER JOIN products p ON ci.product_id = p.id
+    INNER JOIN sellers_products_join spj ON p.id = spj.product_id
+    WHERE ci.cart_id = $1;
+    
     `;
     const values = [cartId];
     const result = await db.query(query, values);

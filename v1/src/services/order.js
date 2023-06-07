@@ -1,15 +1,18 @@
 const db = require("../loaders/db");
-const orderCartİtems = async (userId, cartItems) => {
+
+const orderCartItems = async (userId, cartItems) => {
   try {
     // Sipariş verildiği tarihi ve saatini al
     const orderDate = new Date();
 
     // Sipariş verme işlemlerini yap
     const orderQuery =
-      "INSERT INTO orders (user_id, order_date) VALUES ($1, $2) RETURNING id";
-    const orderValues = [userId, orderDate];
+      "INSERT INTO orders (user_id, order_date, status, total_amount) VALUES ($1, $2, $3, $4) RETURNING id";
+    const orderValues = [userId, orderDate, "pending", 0]; // Durumu "pending" olarak ayarla, total_amount değeri başlangıçta 0 olarak ayarlandı
     const orderResult = await db.query(orderQuery, orderValues);
     const orderId = orderResult.rows[0].id;
+
+    let totalAmount = 0; // Toplam miktarı takip etmek için bir değişken oluştur
 
     for (const cartItem of cartItems) {
       const { product_id, quantity } = cartItem;
@@ -20,12 +23,20 @@ const orderCartİtems = async (userId, cartItems) => {
       const productResult = await db.query(productQuery, productValues);
       const productPrice = productResult.rows[0].price;
 
-      // Sipariş detayını oluştur
       const orderDetailQuery =
         "INSERT INTO order_details (order_id, product_id, quantity, unit_price) VALUES ($1, $2, $3, $4)";
       const orderDetailValues = [orderId, product_id, quantity, productPrice];
       await db.query(orderDetailQuery, orderDetailValues);
+
+      // Toplam miktarı güncelle
+      totalAmount += productPrice * quantity;
     }
+
+    // Siparişin toplam miktarını güncelle
+    const updateTotalAmountQuery =
+      "UPDATE orders SET total_amount = $1 WHERE id = $2";
+    const updateTotalAmountValues = [totalAmount, orderId];
+    await db.query(updateTotalAmountQuery, updateTotalAmountValues);
 
     return true; // Sipariş verme işlemi başarılı olduysa true döndür
   } catch (error) {
@@ -34,4 +45,4 @@ const orderCartİtems = async (userId, cartItems) => {
   }
 };
 
-module.exports = { orderCartİtems };
+module.exports = { orderCartItems };

@@ -14,6 +14,7 @@ const {
   getCommentsOfProduct,
   updateComment,
   deleteCommentOfProduct,
+  getSellersOfProduct,
 } = require("../controllers/product");
 const { authenticateToken } = require("../middlewares/authenticate");
 const { storage } = require("../scripts/utils/fileHelper");
@@ -25,6 +26,7 @@ router
   .route("/add")
   .post(authenticateToken, uploadFile.single("photo"), addProduct);
 router.route("/likes").get(authenticateToken, getProductLikes);
+router.route("/:id/get-sellers-of-product").get(getSellersOfProduct);
 router.route("/:id").put(authenticateToken, updateProduct);
 router.get("/:id", getProduct);
 router.delete("/:id", removeProduct);
@@ -43,5 +45,5 @@ router.route("/:id/add-to-cart").post(authenticateToken, addToCart);
 router
   .route("/:id/decrease-cart-item-quantity")
   .put(authenticateToken, decreaseFromCart);
-
+router.route("/id/get-sellers-of-product").get(getSellersOfProduct);
 module.exports = router;

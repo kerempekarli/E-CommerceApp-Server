@@ -27,21 +27,31 @@ const update = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-const get = async (req, res) => {
+const get = async (req, res, seller_id) => {
   const { id } = req.params;
 
   try {
-    const result = await db.query("SELECT * FROM products WHERE id = $1", [id]);
+    const query = `
+      SELECT p.*, p.id AS product_id, s.id AS seller_id, s.name AS seller_name, spj.stock, spj.price, ct.name AS category_name
+      FROM products p
+      INNER JOIN sellers_products_join spj ON p.id = spj.product_id
+      INNER JOIN sellers s ON spj.seller_id = s.id
+      INNER JOIN categories ct ON p.category_id = ct.id
+      WHERE p.id = $1 AND s.id = $2 ORDER BY spj.price ASC`;
+    const values = [id, seller_id];
+    const result = await db.query(query, values);
+
     if (result.rowCount === 0) {
-      res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({ error: "Product not found" });
     } else {
       return result.rows[0];
     }
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const remove = async (req, res) => {
   const { id } = req.params;
 
@@ -142,6 +152,24 @@ const addToWishlistService = async (productId, userId, res) => {
     res.status(500).json({ message: "An error occurred" });
   }
 };
+
+const getSellersOfProductService = async (productId, req, res) => {
+  try {
+    const query = `
+      SELECT s.id, s.name, s.email, spj.price, spj.stock
+      FROM sellers s
+      INNER JOIN sellers_products_join spj ON s.id = spj.seller_id
+      WHERE spj.product_id = $1
+    `;
+    const values = [productId];
+    const result = await db.query(query, values);
+
+    return result.rows;
+  } catch (error) {
+    console.error("Error getting sellers of product:", error);
+    throw new Error("Failed to get sellers of product");
+  }
+};
 // Kullanıcının mevcut wishlist ID'sini al veya yeni bir tane oluşturan yardımcı fonksiyon
 async function getOrCreateWishlist(userId) {
   const query = "SELECT id FROM wishlists WHERE user_id = $1";
@@ -190,7 +218,6 @@ const getCommentsOfProductService = async (req, res) => {
     res.status(500).json({ error: "An error occurred while getting comments" });
   }
 };
-
 const updateCommentService = async (req, res) => {
   const productId = req.params.id;
   const commentId = req.params.commentId;
@@ -268,4 +295,5 @@ module.exports = {
   getCommentsOfProductService,
   updateCommentService,
   deleteCommentOfProductService,
+  getSellersOfProductService,
 };
