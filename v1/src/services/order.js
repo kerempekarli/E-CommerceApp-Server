@@ -18,7 +18,8 @@ const orderCartItems = async (userId, cartItems) => {
       const { product_id, quantity } = cartItem;
 
       // Ürünün fiyatını ve diğer bilgilerini veritabanından al
-      const productQuery = "SELECT price FROM products WHERE id = $1";
+      const productQuery =
+        "SELECT spj.price FROM sellers_products_join spj JOIN products p ON p.id = spj.product_id WHERE p.id = $1;";
       const productValues = [product_id];
       const productResult = await db.query(productQuery, productValues);
       const productPrice = productResult.rows[0].price;
@@ -32,16 +33,18 @@ const orderCartItems = async (userId, cartItems) => {
       totalAmount += productPrice * quantity;
     }
 
+    console.log("TOTAL AMOUNT ", totalAmount);
+
     // Siparişin toplam miktarını güncelle
     const updateTotalAmountQuery =
       "UPDATE orders SET total_amount = $1 WHERE id = $2";
     const updateTotalAmountValues = [totalAmount, orderId];
     await db.query(updateTotalAmountQuery, updateTotalAmountValues);
 
-    return true; // Sipariş verme işlemi başarılı olduysa true döndür
+    return { success: true, total_amount: totalAmount }; // Sipariş verme işlemi başarılı olduysa true döndür
   } catch (error) {
     console.error("Sipariş verme işlemi başarısız oldu:", error);
-    return false; // Sipariş verme işlemi başarısız olduysa false döndür
+    return { success: false }; // Sipariş verme işlemi başarısız olduysa false döndür
   }
 };
 
