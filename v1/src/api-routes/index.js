@@ -7,3 +7,4 @@ module.exports.orderRoutes = require("./order");
 module.exports.cartRoutes = require("./cart");
 module.exports.roleRoutes = require("./role");
 module.exports.wishListRoutes = require("./wishlist");
+module.exports.notificationRoutes = require("./notifications");

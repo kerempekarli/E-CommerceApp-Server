@@ -13,6 +13,7 @@ const {
   cartRoutes,
   roleRoutes,
   wishListRoutes,
+  notificationRoutes,
 } = require("./api-routes");
 config();
 events();
@@ -33,4 +34,5 @@ app.listen(3232, () => {
   app.use("/cart", cartRoutes);
   app.use("/roles", roleRoutes);
   app.use("/wishlist", wishListRoutes);
+  app.use("/notifications", notificationRoutes);
 });
