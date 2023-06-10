@@ -15,7 +15,7 @@ const orderCartItems = async (userId, cartItems) => {
     let totalAmount = 0; // Toplam miktarı takip etmek için bir değişken oluştur
 
     for (const cartItem of cartItems) {
-      const { product_id, quantity } = cartItem;
+      const { product_id, quantity, seller_id } = cartItem;
 
       // Ürünün fiyatını ve diğer bilgilerini veritabanından al
       const productQuery =
@@ -25,8 +25,14 @@ const orderCartItems = async (userId, cartItems) => {
       const productPrice = productResult.rows[0].price;
 
       const orderDetailQuery =
-        "INSERT INTO order_details (order_id, product_id, quantity, unit_price) VALUES ($1, $2, $3, $4)";
-      const orderDetailValues = [orderId, product_id, quantity, productPrice];
+        "INSERT INTO order_details (order_id, product_id, quantity, unit_price, seller_id) VALUES ($1, $2, $3, $4, $5)";
+      const orderDetailValues = [
+        orderId,
+        product_id,
+        quantity,
+        productPrice,
+        seller_id,
+      ];
       await db.query(orderDetailQuery, orderDetailValues);
 
       // Toplam miktarı güncelle
@@ -47,5 +53,19 @@ const orderCartItems = async (userId, cartItems) => {
     return { success: false }; // Sipariş verme işlemi başarısız olduysa false döndür
   }
 };
+const getOrderItemsService = async (orderId) => {
+  const query = `
+  SELECT od.id, od.order_id, od.product_id, od.quantity, od.unit_price, od.seller_id, p.name as product_name
+  FROM order_details od
+  INNER JOIN products p ON od.product_id = p.id
+  WHERE od.order_id = $1
+`;
 
-module.exports = { orderCartItems };
+  const values = [orderId];
+
+  const client = await db.connect();
+  const result = await client.query(query, values);
+
+  return result.rows;
+};
+module.exports = { orderCartItems, getOrderItemsService };

@@ -9,6 +9,7 @@ const authenticateToken = (req, res, next) => {
       .send({ error: "Bu işlemi yapmak için giriş yapmalısınız" });
   }
   JWT.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY, (err, user) => {
+    console.log("User: ", user);
     if (err) {
       console.log(err);
       return res.status(403).send({ error: "Token süresi geçmiş" });

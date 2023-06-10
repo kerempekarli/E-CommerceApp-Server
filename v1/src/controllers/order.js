@@ -1,5 +1,5 @@
 const cart = require("../services/cart");
-const { orderCartItems } = require("../services/order");
+const { orderCartItems, getOrderItemsService } = require("../services/order");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST);
 const amqp = require("amqplib");
@@ -62,4 +62,17 @@ const order = async (req, res) => {
   // res.status(200).send({ success: true, message: "başarılı" });
 };
 
-module.exports = { order };
+const getOrderItems = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    console.log(" ORDER_ID ", orderId);
+    const orderItems = await getOrderItemsService(orderId);
+
+    res.status(200).json(orderItems);
+  } catch (error) {
+    console.error("Hata:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { order, getOrderItems };
