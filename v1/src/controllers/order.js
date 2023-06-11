@@ -5,11 +5,11 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST);
 const amqp = require("amqplib");
 
 const order = async (req, res) => {
-  const cartId = await cart.getOrCreateCart(req.user.id);
-  const cartItems = await cart.getCartItems(cartId);
-  const result = await orderCartItems(req.user.id, cartItems);
+  // const cartId = await cart.getOrCreateCart(req.user.id);
+  // const cartItems = await cart.getCartItems(cartId);
+  // const result = await orderCartItems(req.user.id, cartItems);
 
-  const { amount, id } = req.body;
+  const { amount, payment_id } = req.body;
 
   // try {
   //   const payment = await stripe.paymentIntents.create({
@@ -29,7 +29,7 @@ const order = async (req, res) => {
   //   res.json("Satın alma işlemi başarısız");
   //   return; // Hata durumunda fonksiyondan çık
   // }
-
+  res.status(200).send("Sipariş işleme alındı");
   try {
     const connection = await amqp.connect("amqp://localhost");
     const channel = await connection.createChannel();
@@ -37,8 +37,7 @@ const order = async (req, res) => {
 
     const orderData = {
       userId: req.user.id,
-      cartItems: cartItems,
-      amount: result.total_amount,
+      payment_id: payment_id,
     };
 
     const orderBuffer = Buffer.from(JSON.stringify(orderData));
@@ -48,8 +47,6 @@ const order = async (req, res) => {
 
     await channel.close();
     await connection.close();
-
-    res.status(200).send("Sipariş işleme alındı");
   } catch (error) {
     console.error("Hata:", error);
   }
