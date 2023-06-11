@@ -85,7 +85,7 @@ class CartService {
     const cartId = await this.getOrCreateCart(userId);
 
     const query = `
-    SELECT ci.id, ci.product_id, ci.quantity, p.name, spj.price
+    SELECT ci.id, ci.product_id, ci.quantity, p.name, spj.price, ci.seller_id
     FROM cart_items ci
     INNER JOIN products p ON ci.product_id = p.id
     INNER JOIN sellers_products_join spj ON p.id = spj.product_id
