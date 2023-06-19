@@ -9,7 +9,6 @@ class WishListService {
       const query = "SELECT id FROM wishlists WHERE user_id = $1";
       const values = [userId];
       const result = await db.query(query, values);
-      console.log("CHECK");
       if (result.rows.length > 0) {
         this.wishlist = result.rows[0];
       } else {
@@ -31,7 +30,6 @@ class WishListService {
 
       // PostgreSQL bağlantısını kullanarak sorguyu çalıştır
       await db.query(query, values);
-      console.log("Ürün istek listesine başarıyla eklendi.");
       return "Ekleme işlemi başarılı";
     } catch (error) {
       console.error("İstek listesine ürün eklenirken bir hata oluştu:", error);
@@ -44,7 +42,6 @@ class WishListService {
         "DELETE FROM wishlist_items WHERE wishlist_id = $1 AND product_id = $2";
       const values = [wishListId, productId];
       await db.query(query, values);
-      console.log("Ürün istek listesinden başarıyla silindi.");
       return "Silme işlemi başarılı";
     } catch (error) {
       console.error(
@@ -56,7 +53,6 @@ class WishListService {
   }
   async getWishListItemsService(userId) {
     const wishList = await this.getOrCreateWishListService(userId);
-    console.log("BIRASLO CALISICAK MI2 ,", wishList.id);
     const query = `
     SELECT wi.id AS wishlist_item_id, p.id as product_id, p.*
     FROM wishlist_items wi
@@ -65,7 +61,6 @@ class WishListService {
     `;
     const values = [wishList.id];
     const result = await db.query(query, values);
-    console.log("BIRASLO CALISICAK MI4 ", result.rows);
     return result.rows;
   }
   async isAdded(productId, wishlistId) {
@@ -73,7 +68,6 @@ class WishListService {
       "SELECT COUNT(*) FROM wishlist_items WHERE product_id = $1 AND wishlist_id = $2";
     const values = [productId, wishlistId];
     const result = await db.query(query, values);
-    console.log("SONUÇ ", result.rows[0].count > 0);
 
     return result.rows[0].count > 0;
   }

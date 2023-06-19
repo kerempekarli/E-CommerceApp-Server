@@ -29,7 +29,7 @@ const order = async (req, res) => {
   //   res.json("Satın alma işlemi başarısız");
   //   return; // Hata durumunda fonksiyondan çık
   // }
-  res.status(200).send("Sipariş işleme alındı");
+  res.status(200).send({ success: true, message: "Sipariş başarıyla alındı" });
   try {
     const connection = await amqp.connect("amqp://localhost");
     const channel = await connection.createChannel();

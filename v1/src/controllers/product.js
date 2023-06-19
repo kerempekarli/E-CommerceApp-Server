@@ -12,10 +12,10 @@ const {
   updateCommentService,
   deleteCommentOfProductService,
   getSellersOfProductService,
+  checkStockService,
 } = require("../services/product");
 const { addSellerProduct } = require("../services/sellers_products_join");
 const cartService = require("../services/cart");
-
 const getAllProducts = async (req, res) => {
   try {
     const data = await getAll(req, res);
@@ -67,7 +67,6 @@ const addToWishlist = async (req, res) => {
   const userId = req.user.id; // İstekteki kullanıcı ID'si
   await addToWishlistService(productId, userId, res);
 };
-
 const addToCart = async (req, res) => {
   try {
     const cardId = await cartService.getOrCreateCart(req.user.id);
@@ -95,7 +94,6 @@ const decreaseFromCart = async (req, res) => {
     res.status(400).send(err);
   }
 };
-
 const getProductLikes = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -117,7 +115,6 @@ const updateComment = async (req, res) => {
 const deleteCommentOfProduct = async (req, res) => {
   deleteCommentOfProductService(req, res);
 };
-
 const getSellersOfProduct = async (req, res) => {
   try {
     console.log("ÇALIŞTI");
@@ -129,6 +126,16 @@ const getSellersOfProduct = async (req, res) => {
   } catch (error) {
     console.error("Error getting sellers of product:", error);
     res.status(500).json({ error: "Failed to get sellers of product" });
+  }
+};
+const checkStock = async (req, res) => {
+  try {
+    const { productId, sellerId } = req.body;
+    const result = await checkStockService(productId, sellerId);
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(400).send("Başarısız");
+    console.log(err);
   }
 };
 
@@ -148,4 +155,5 @@ module.exports = {
   updateComment,
   deleteCommentOfProduct,
   getSellersOfProduct,
+  checkStock,
 };

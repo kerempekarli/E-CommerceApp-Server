@@ -280,6 +280,11 @@ const deleteCommentOfProductService = async (req, res) => {
     res.status(500).json({ error: "An error occurred while deleting comment" });
   }
 };
+const checkStockService = async (productId, sellerId) => {
+  const query =
+    "SELECT stock, price FROM sellers_products_join WHERE product_id = $1 AND seller_id = $2";
+  return db.query(query, [productId, sellerId]);
+};
 
 module.exports = {
   getAll,
@@ -296,4 +301,5 @@ module.exports = {
   updateCommentService,
   deleteCommentOfProductService,
   getSellersOfProductService,
+  checkStockService,
 };
