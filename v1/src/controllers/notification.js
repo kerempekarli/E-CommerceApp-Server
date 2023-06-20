@@ -69,15 +69,28 @@ async function getSellerNotifications(req, res) {
 
 async function getUserNotifications(req, res) {
   try {
-    const userId = req.query.userId;
+    const userId = req.user.id;
     const notifications = await notificationService.getUserNotifications(
       userId
     );
+    console.log("NOTIFICATION ", notifications);
     res.json(notifications);
   } catch (error) {
     res.status(500).json({
       error: "An error occurred while retrieving user notifications.",
     });
+    console.log("ERROR ", error);
+  }
+}
+async function setAllNotificationTrue(req, res) {
+  try {
+    const result = await notificationService.setAllNotificationTrueService(
+      req.user.id
+    );
+    res.status(200).send({ success: true, data: result });
+  } catch (error) {
+    console.error("Error setting notifications as seen:", error);
+    res.status(400).send({ success: false, message: "Başarısız" });
   }
 }
 
@@ -88,4 +101,5 @@ module.exports = {
   deleteNotification,
   getSellerNotifications,
   getUserNotifications,
+  setAllNotificationTrue,
 };

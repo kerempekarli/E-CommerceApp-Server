@@ -35,7 +35,7 @@ const order = async (req, res) => {
     const channel = await connection.createChannel();
     const queue = "purchase_queue";
 
-    const orderData = {
+    const orderData = { 
       userId: req.user.id,
       payment_id: payment_id,
     };
@@ -63,38 +63,5 @@ const getOrderItems = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-async function calculateCartItemsTotalPrice(cartItems) {
-  try {
-    const client = await pool.connect();
-
-    let totalAmount = 0;
-
-    for (const cartItem of cartItems) {
-      const { product_id, seller_id, quantity } = cartItem;
-
-      // Seller ve ürün bilgilerini sellers_products_join tablosundan al
-      const query = `
-        SELECT price
-        FROM sellers_products_join
-        WHERE seller_id = $1 AND product_id = $2;
-      `;
-      const values = [seller_id, product_id];
-      const result = await client.query(query, values);
-
-      if (result.rows.length > 0) {
-        const price = result.rows[0].price;
-        const itemTotalPrice = price * quantity;
-        totalAmount += itemTotalPrice;
-      }
-    }
-
-    // Sonuçları döndür
-    return totalAmount;
-  } catch (error) {
-    console.error("Hata:", error);
-  } finally {
-    client.release();
-  }
-}
 
 module.exports = { order, getOrderItems };
