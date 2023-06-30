@@ -40,11 +40,13 @@ async function getSellerNotifications(sellerId) {
 }
 
 async function getUserNotifications(userId) {
-  const query = "SELECT * FROM user_notifications WHERE user_id = $1";
+  const query =
+    "SELECT * FROM user_notifications WHERE user_id = $1 ORDER BY created_at DESC";
   const values = [userId];
   const { rows } = await db.query(query, values);
   return rows;
 }
+
 const setAllNotificationTrueService = async (userId) => {
   const query = `
       UPDATE public.user_notifications
