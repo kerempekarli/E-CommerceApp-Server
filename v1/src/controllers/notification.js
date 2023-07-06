@@ -55,12 +55,14 @@ async function deleteNotification(req, res) {
 
 async function getSellerNotifications(req, res) {
   try {
-    const sellerId = req.query.sellerId;
+    const sellerId = req.user.id;
     const notifications = await notificationService.getSellerNotifications(
       sellerId
     );
+    console.log("SELLER NOTIFICIATOINS ", notifications);
     res.json(notifications);
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error: "An error occurred while retrieving seller notifications.",
     });
@@ -84,10 +86,19 @@ async function getUserNotifications(req, res) {
 }
 async function setAllNotificationTrue(req, res) {
   try {
-    const result = await notificationService.setAllNotificationTrueService(
-      req.user.id
-    );
-    res.status(200).send({ success: true, data: result });
+    if (req.user.role_name == "user") {
+      const result = await notificationService.setAllNotificationTrueService(
+        req.user.id
+      );
+      res.status(200).send({ success: true, data: result });
+    }
+    if (req.user.role_name == "seller") {
+      const result =
+        await notificationService.setAllSellerNotificationTrueService(
+          req.user.id
+        );
+      res.status(200).send({ success: true, data: result });
+    }
   } catch (error) {
     console.error("Error setting notifications as seen:", error);
     res.status(400).send({ success: false, message: "Başarısız" });

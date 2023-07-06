@@ -33,7 +33,7 @@ async function deleteNotification(id) {
 }
 
 async function getSellerNotifications(sellerId) {
-  const query = "SELECT * FROM notifications WHERE seller_id = $1";
+  const query = "SELECT * FROM seller_notifications WHERE seller_id = $1";
   const values = [sellerId];
   const { rows } = await db.query(query, values);
   return rows;
@@ -57,7 +57,16 @@ const setAllNotificationTrueService = async (userId) => {
   await db.query(query, values);
   console.log(`All notifications for user ID ${userId} marked as seen.`);
 };
-
+const setAllSellerNotificationTrueService = async (userId) => {
+  const query = `
+      UPDATE public.seller_notifications
+      SET seen = true
+      WHERE seller_id = $1;
+    `;
+  const values = [userId];
+  await db.query(query, values);
+  console.log(`All notifications for user ID ${userId} marked as seen.`);
+};
 module.exports = {
   getNotifications,
   createNotification,
@@ -66,4 +75,5 @@ module.exports = {
   getSellerNotifications,
   getUserNotifications,
   setAllNotificationTrueService,
+  setAllSellerNotificationTrueService,
 };
