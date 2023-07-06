@@ -26,7 +26,7 @@ const remove = (req, res) => {
 
   return db.query(query);
 };
-const update = (req, res) => {
+const update = (req, res) => {  
   let query = "UPDATE users SET ";
   let values = [];
   let index = 1;
@@ -45,7 +45,7 @@ const update = (req, res) => {
 };
 const login = (data) => {
   query = {
-    text: "SELECT users.*, roles.rol_adı FROM users JOIN roles ON users.rol_id = roles.rol_id WHERE users.email = $1 AND users.password = $2",
+    text: "SELECT users.*, roles.role_name FROM users JOIN roles ON users.rol_id = roles.rol_id WHERE users.email = $1 AND users.password = $2",
     values: [data.email, data.password],
   };
   return db.query(query);
@@ -53,7 +53,7 @@ const login = (data) => {
 const addUserPhotoService = (filename, id) => {
   const query = "UPDATE users SET user_image = $1 WHERE id = $2";
   const values = [filename, id];
-  return db.query(query, values); 
+  return db.query(query, values);
 };
 
 module.exports = {

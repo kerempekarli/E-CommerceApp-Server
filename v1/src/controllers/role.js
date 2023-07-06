@@ -1,7 +1,7 @@
 const returnRole = (req, res) => {
-  const { rol_adı } = req.user;
+  const { role_name } = req.user;
 
-  res.status(200).send({ role_name: rol_adı });
+  res.status(200).send({ role_name: role_name });
 };
 
 module.exports = { returnRole };
