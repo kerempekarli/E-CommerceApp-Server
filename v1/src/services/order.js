@@ -71,7 +71,24 @@ const getOrderItemsService = async (orderId) => {
 async function getSellerOrdersWithUserAndProduct(sellerId) {
   try {
     const query = `
-      SELECT o.id AS order_id, u.username AS user_username, p.name AS product_name
+      SELECT 
+        o.id AS order_id, 
+        o.user_id AS order_user_id, 
+        o.order_date, 
+        o.total_amount, 
+        o.status, 
+        o.shipping_address, 
+        u.id AS user_id, 
+        u.username, 
+        u.email, 
+        p.id AS product_id, 
+        p.name AS product_name, 
+        p.description AS product_description,
+        p.product_image,
+        od.id AS order_detail_id, 
+        od.quantity, 
+        od.unit_price,
+        od.seller_id
       FROM orders AS o
       JOIN users AS u ON o.user_id = u.id
       JOIN order_details AS od ON o.id = od.order_id
