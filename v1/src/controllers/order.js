@@ -1,5 +1,10 @@
 const cart = require("../services/cart");
-const { orderCartItems, getOrderItemsService } = require("../services/order");
+const {
+  orderCartItems,
+  getOrderItemsService,
+  getUserOrders,
+  getSellerOrdersWithUserAndProduct,
+} = require("../services/order");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST);
 const amqp = require("amqplib");
@@ -35,7 +40,7 @@ const order = async (req, res) => {
     const channel = await connection.createChannel();
     const queue = "purchase_queue";
 
-    const orderData = { 
+    const orderData = {
       userId: req.user.id,
       payment_id: payment_id,
     };
@@ -63,5 +68,17 @@ const getOrderItems = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+const getOrders = async (req, res) => {
+  try {
+    if (req.user.rol_id == 1) {
+    }
+    if (req.user.rol_id == 2) {
+      const result = await getSellerOrdersWithUserAndProduct();
+      res.status(200).send(result);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-module.exports = { order, getOrderItems };
+module.exports = { order, getOrderItems, getOrders };

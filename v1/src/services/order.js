@@ -68,4 +68,34 @@ const getOrderItemsService = async (orderId) => {
 
   return result.rows;
 };
-module.exports = { orderCartItems, getOrderItemsService };
+async function getSellerOrdersWithUserAndProduct(sellerId) {
+  try {
+    const query = `
+      SELECT o.id AS order_id, u.username AS user_username, p.name AS product_name
+      FROM orders AS o
+      JOIN users AS u ON o.user_id = u.id
+      JOIN order_details AS od ON o.id = od.order_id
+      JOIN products AS p ON od.product_id = p.id
+      WHERE od.seller_id = $1
+    `;
+    const values = [sellerId];
+
+    const result = await pool.query(query, values);
+
+    const orders = result.rows;
+
+    return orders;
+  } catch (error) {
+    console.error(
+      "Satıcının siparişlerini, kullanıcı ve ürün bilgileriyle birlikte alırken bir hata oluştu:",
+      error
+    );
+    throw error;
+  }
+}
+
+module.exports = {
+  orderCartItems,
+  getOrderItemsService,
+  getSellerOrdersWithUserAndProduct,
+};
