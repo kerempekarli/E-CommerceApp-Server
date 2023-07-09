@@ -4,6 +4,7 @@ const {
   getOrderItemsService,
   getUserOrders,
   getSellerOrdersWithUserAndProduct,
+  getUserOrdersWithOrderDetails,
 } = require("../services/order");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST);
@@ -72,6 +73,9 @@ const getOrders = async (req, res) => {
   try {
     console.log("REQ USER ", req.user);
     if (req.user.rol_id == 1) {
+      console.log("USER CALISTI ORDERS");
+      const result = await getUserOrdersWithOrderDetails(req.user.id);
+      res.status(200).send(result);
     }
     if (req.user.rol_id == 2) {
       const result = await getSellerOrdersWithUserAndProduct(req.user.id);

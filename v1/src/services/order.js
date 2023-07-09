@@ -110,9 +110,97 @@ async function getSellerOrdersWithUserAndProduct(sellerId) {
     throw error;
   }
 }
+// Kullanıcının bütün siparişlerini ve sipariş detaylarını getiren yöntem
+// Kullanıcının bütün siparişlerini ve sipariş detaylarını getiren yöntem
+async function getUserOrdersWithOrderDetails(userId) {
+  try {
+    // Kullanıcının siparişlerini getir
+    const orders = await getUserOrders(userId);
+
+    // Siparişleri döngüyle map yaparak sipariş detaylarını ekleyin
+    const ordersWithDetails = await Promise.all(
+      orders.map(async (order) => {
+        const {
+          id,
+          user_id,
+          order_date,
+          total_amount,
+          status,
+          shipping_address,
+        } = order;
+
+        // Siparişe ait sipariş detaylarını getir
+        const orderDetails = await getOrderDetailsByOrderId(id);
+
+        return {
+          order_id: id,
+          user_id,
+          order_date,
+          total_amount,
+          status,
+          shipping_address,
+          order_details: orderDetails,
+        };
+      })
+    );
+
+    return ordersWithDetails;
+  } catch (error) {
+    console.error(
+      "Kullanıcının siparişleri ve sipariş detayları alınırken bir hata oluştu:",
+      error
+    );
+    throw error;
+  }
+}
+
+async function getUserOrders(userId) {
+  try {
+    const query = `
+      SELECT *
+      FROM orders
+      WHERE user_id = $1
+    `;
+    const values = [userId];
+
+    const result = await db.query(query, values);
+
+    const orders = result.rows;
+
+    return orders;
+  } catch (error) {
+    console.error("Kullanıcının siparişleri alınırken bir hata oluştu:", error);
+    throw error;
+  }
+}
+
+// Siparişe ait sipariş detaylarını getiren yöntem
+async function getOrderDetailsByOrderId(orderId) {
+  try {
+    const query = `
+      SELECT *
+      FROM order_details
+      WHERE order_id = $1
+    `;
+    const values = [orderId];
+
+    const result = await db.query(query, values);
+
+    const orderDetails = result.rows;
+
+    return orderDetails;
+  } catch (error) {
+    console.error(
+      "Siparişe ait sipariş detayları alınırken bir hata oluştu:",
+      error
+    );
+    throw error;
+  }
+}
 
 module.exports = {
   orderCartItems,
   getOrderItemsService,
   getSellerOrdersWithUserAndProduct,
+  getUserOrdersWithOrderDetails,
 };
