@@ -80,7 +80,7 @@ async function getSellerOrdersWithUserAndProduct(sellerId) {
     `;
     const values = [sellerId];
 
-    const result = await pool.query(query, values);
+    const result = await db.query(query, values);
 
     const orders = result.rows;
 

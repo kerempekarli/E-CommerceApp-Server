@@ -70,10 +70,11 @@ const getOrderItems = async (req, res) => {
 };
 const getOrders = async (req, res) => {
   try {
+    console.log("REQ USER ", req.user);
     if (req.user.rol_id == 1) {
     }
     if (req.user.rol_id == 2) {
-      const result = await getSellerOrdersWithUserAndProduct();
+      const result = await getSellerOrdersWithUserAndProduct(req.user.id);
       res.status(200).send(result);
     }
   } catch (err) {
