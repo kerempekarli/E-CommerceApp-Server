@@ -5,6 +5,7 @@ const {
   getUserOrders,
   getSellerOrdersWithUserAndProduct,
   getUserOrdersWithOrderDetails,
+  updateOrderDetailStatusService,
 } = require("../services/order");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_TEST);
@@ -86,4 +87,13 @@ const getOrders = async (req, res) => {
   }
 };
 
-module.exports = { order, getOrderItems, getOrders };
+const updateOrderDetailStatus = async (req, res) => {
+  try {
+    const result = await updateOrderDetailStatusService();
+    res.status(200).send(result);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = { order, getOrderItems, getOrders, updateOrderDetailStatus };

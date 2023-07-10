@@ -197,10 +197,34 @@ async function getOrderDetailsByOrderId(orderId) {
     throw error;
   }
 }
+// Order Details tablosundaki "status" sütununu güncelleyen yöntem
+async function updateOrderDetailStatusService(
+  orderDetailId,
+  newStatus,
+  sellerId
+) {
+  try {
+    const query = `
+      UPDATE order_details
+      SET status = $1
+      WHERE id = $2 AND seller_id = $3
+    `;
+    const values = [newStatus, orderDetailId, sellerId];
+
+    await pool.query(query, values);
+
+    console.log("Order Detail status güncellendi");
+    return "Başarıyla güncellendi";
+  } catch (error) {
+    console.error("Order Detail status güncellenirken bir hata oluştu:", error);
+    throw error;
+  }
+}
 
 module.exports = {
   orderCartItems,
   getOrderItemsService,
   getSellerOrdersWithUserAndProduct,
   getUserOrdersWithOrderDetails,
+  updateOrderDetailStatusService,
 };
