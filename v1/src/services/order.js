@@ -76,7 +76,7 @@ async function getSellerOrdersWithUserAndProduct(sellerId) {
         o.user_id AS order_user_id, 
         o.order_date, 
         o.total_amount, 
-        o.status, 
+        od.status, 
         o.shipping_address, 
         u.id AS user_id, 
         u.username, 
@@ -198,25 +198,15 @@ async function getOrderDetailsByOrderId(orderId) {
   }
 }
 // Order Details tablosundaki "status" sütununu güncelleyen yöntem
-async function updateOrderDetailStatusService(
-  orderDetailId,
-  newStatus,
-  sellerId
-) {
+async function updateOrderDetailStatusService(id, newStatus) {
   try {
-    const query = `
-      UPDATE order_details
-      SET status = $1
-      WHERE id = $2 AND seller_id = $3
-    `;
-    const values = [newStatus, orderDetailId, sellerId];
+    const updateQuery = "UPDATE order_details SET status = $1 WHERE id = $2";
+    const updateValues = [newStatus, id];
+    await db.query(updateQuery, updateValues);
 
-    await pool.query(query, values);
-
-    console.log("Order Detail status güncellendi");
-    return "Başarıyla güncellendi";
+    return "Sipariş ayrıntısı durumu güncellendi.";
   } catch (error) {
-    console.error("Order Detail status güncellenirken bir hata oluştu:", error);
+    console.error("Sipariş ayrıntısı güncellenirken bir hata oluştu:", error);
     throw error;
   }
 }
