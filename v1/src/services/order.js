@@ -25,13 +25,14 @@ const orderCartItems = async (userId, cartItems) => {
       const productPrice = productResult.rows[0].price;
 
       const orderDetailQuery =
-        "INSERT INTO order_details (order_id, product_id, quantity, unit_price, seller_id) VALUES ($1, $2, $3, $4, $5)";
+        "INSERT INTO order_details (order_id, product_id, quantity, unit_price, seller_id, status) VALUES ($1, $2, $3, $4, $5, $6)";
       const orderDetailValues = [
         orderId,
         product_id,
         quantity,
         productPrice,
         seller_id,
+        "pending",
       ];
       await db.query(orderDetailQuery, orderDetailValues);
 
@@ -143,7 +144,7 @@ async function getUserOrdersWithOrderDetails(userId) {
         };
       })
     );
-
+    console.log("USER ORDERS ", ordersWithDetails);
     return ordersWithDetails;
   } catch (error) {
     console.error(
